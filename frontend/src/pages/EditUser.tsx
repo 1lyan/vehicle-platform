@@ -1,31 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { User } from '../types';
 import { userAPI } from '../api/users';
-import { Link } from 'react-router-dom';
 
-const Users: React.FC = () => {
-  const [users, setUsers] = useState<User[]>([]);
+const EditUser: React.FC = (props: {id: number}) => {
   const [formData, setFormData] = useState({ email: '', firstName: '', lastName: '' });
 
   useEffect(() => {
-    loadUsers();
+    loadUser();
   }, []);
 
-  const loadUsers = async () => {
+  const loadUser = async () => {
     try {
-      const response = await userAPI.getAll();
-      setUsers(response.data);
+      const { data } = await userAPI.getById(props.id);
+      setFormData({ email: data.email, firstName: data.firstName, lastName: data.lastName});
     } catch (error) {
-      console.error('Error loading users:', error);
+      console.error('Error loading user:', error);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await userAPI.create(formData);
-      setFormData({ email: '', firstName: '', lastName: '' });
-      loadUsers();
+      await userAPI.update(props.id, formData);
     } catch (error) {
       console.error('Error creating user:', error);
     }
@@ -33,7 +29,7 @@ const Users: React.FC = () => {
 
   return (
     <div>
-      <h2>Users</h2>
+      <h2>User</h2>
       
       <form onSubmit={handleSubmit}>
         <input
@@ -57,25 +53,11 @@ const Users: React.FC = () => {
           onChange={(e) => setFormData({...formData, lastName: e.target.value})}
           required
         />
-        <button type="submit">Create User</button>
+        <button type="submit">Update</button>
       </form>
 
-      <div>
-        {users.map(user => (
-          <div key={user.id} style={{border: '1px solid #ccc', margin: '10px', padding: '10px'}}>
-            <h3>{user.firstName} {user.lastName}</h3>
-            <p>Email: {user.email}</p>
-            <p>ID: {user.id}</p>
-            <p>
-              <nav style={{ marginBottom: '20px' }}>
-                <Link to={`/users/${user.id}`} style={{ marginRight: '15px' }}>Edit</Link>
-              </nav>
-            </p>
-          </div>
-        ))}
-      </div>
     </div>
   );
 };
 
-export default Users;
+export default EditUser;

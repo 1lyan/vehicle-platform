@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Users from './pages/Users';
+import EditUser from './pages/EditUser';
 import Vehicles from './pages/Vehicles';
 
 const App: React.FC = () => {
@@ -16,6 +17,7 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<div><h1>Vehicle Service Platform</h1><p>Welcome to the platform!</p></div>} />
           <Route path="/users" element={<Users />} />
+          <Route path="/users/:id" element={<EditUser id={window.location.href.split('/')[4]}/>} />
           <Route path="/vehicles" element={<Vehicles />} />
         </Routes>
       </div>
