@@ -63,6 +63,8 @@ services:
       DB_DATABASE: user_db
       RABBITMQ_URL: amqp://rabbitmq:5672
       NODE_ENV: development
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
     depends_on:
       - user-db
       - rabbitmq
@@ -84,6 +86,8 @@ services:
       DB_DATABASE: vehicle_db
       RABBITMQ_URL: amqp://rabbitmq:5672
       NODE_ENV: development
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
     depends_on:
       - vehicle-db
       - rabbitmq
