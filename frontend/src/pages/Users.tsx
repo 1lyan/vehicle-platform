@@ -32,16 +32,17 @@ const Users: React.FC = () => {
   };
 
   return (
-    <div>
-      <h2>Users</h2>
-      
-      <form onSubmit={handleSubmit}>
+    <div className="max-w-3xl mx-auto p-4">
+      <h2 className="text-2xl font-semibold mb-4">Users</h2>
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3 mb-6">
         <input
           type="email"
           placeholder="Email"
           value={formData.email}
           onChange={(e) => setFormData({...formData, email: e.target.value})}
           required
+          className="border rounded px-3 py-2"
         />
         <input
           type="text"
@@ -49,6 +50,7 @@ const Users: React.FC = () => {
           value={formData.firstName}
           onChange={(e) => setFormData({...formData, firstName: e.target.value})}
           required
+          className="border rounded px-3 py-2"
         />
         <input
           type="text"
@@ -56,21 +58,20 @@ const Users: React.FC = () => {
           value={formData.lastName}
           onChange={(e) => setFormData({...formData, lastName: e.target.value})}
           required
+          className="border rounded px-3 py-2"
         />
-        <button type="submit">Create User</button>
+        <button type="submit" className="bg-blue-600 text-white rounded px-4 py-2 w-max">Create User</button>
       </form>
 
-      <div>
+      <div className="space-y-3">
         {users.map(user => (
-          <div key={user.id} style={{border: '1px solid #ccc', margin: '10px', padding: '10px'}}>
-            <h3>{user.firstName} {user.lastName}</h3>
-            <p>Email: {user.email}</p>
-            <p>ID: {user.id}</p>
-            <p>
-              <nav style={{ marginBottom: '20px' }}>
-                <Link to={`/users/${user.id}`} style={{ marginRight: '15px' }}>Edit</Link>
-              </nav>
-            </p>
+          <div key={user.id} className="border rounded p-4">
+            <h3 className="text-lg font-medium">{user.firstName} {user.lastName}</h3>
+            <p className="text-sm text-gray-600">Email: {user.email}</p>
+            <p className="text-sm text-gray-500">ID: {user.id}</p>
+            <div className="mt-3">
+              <Link to={`/users/${user.id}`} className="text-blue-600 hover:underline">Edit</Link>
+            </div>
           </div>
         ))}
       </div>

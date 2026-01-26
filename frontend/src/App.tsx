@@ -7,15 +7,23 @@ import Vehicles from './pages/Vehicles';
 const App: React.FC = () => {
   return (
     <Router>
-      <div style={{ padding: '20px' }}>
-        <nav style={{ marginBottom: '20px' }}>
-          <Link to="/" style={{ marginRight: '15px' }}>Home</Link>
-          <Link to="/users" style={{ marginRight: '15px' }}>Users</Link>
-          <Link to="/vehicles">Vehicles</Link>
+      <div className="p-5">
+        <nav className="mb-5">
+          <Link to="/" className="mr-4 text-blue-600 hover:underline">Home</Link>
+          <Link to="/users" className="mr-4 text-blue-600 hover:underline">Users</Link>
+          <Link to="/vehicles" className="text-blue-600 hover:underline">Vehicles</Link>
         </nav>
-        
+
         <Routes>
-          <Route path="/" element={<div><h1>Vehicle Service Platform</h1><p>Welcome to the platform!</p></div>} />
+          <Route
+            path="/"
+            element={
+              <div className="max-w-4xl mx-auto">
+                <h1 className="text-3xl font-bold mb-2">Vehicle Service Platform</h1>
+                <p className="text-gray-700">Welcome to the platform!</p>
+              </div>
+            }
+          />
           <Route path="/users" element={<Users />} />
           <Route path="/users/:id" element={<EditUser id={window.location.href.split('/')[4]}/>} />
           <Route path="/vehicles" element={<Vehicles />} />

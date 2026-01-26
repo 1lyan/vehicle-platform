@@ -28,16 +28,17 @@ const EditUser: React.FC = (props: {id: number}) => {
   };
 
   return (
-    <div>
-      <h2>User</h2>
-      
-      <form onSubmit={handleSubmit}>
+    <div className="max-w-3xl mx-auto p-4">
+      <h2 className="text-2xl font-semibold mb-4">User</h2>
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
         <input
           type="email"
           placeholder="Email"
           value={formData.email}
           onChange={(e) => setFormData({...formData, email: e.target.value})}
           required
+          className="border rounded px-3 py-2"
         />
         <input
           type="text"
@@ -45,6 +46,7 @@ const EditUser: React.FC = (props: {id: number}) => {
           value={formData.firstName}
           onChange={(e) => setFormData({...formData, firstName: e.target.value})}
           required
+          className="border rounded px-3 py-2"
         />
         <input
           type="text"
@@ -52,8 +54,9 @@ const EditUser: React.FC = (props: {id: number}) => {
           value={formData.lastName}
           onChange={(e) => setFormData({...formData, lastName: e.target.value})}
           required
+          className="border rounded px-3 py-2"
         />
-        <button type="submit">Update</button>
+        <button type="submit" className="bg-green-600 text-white rounded px-4 py-2 w-max">Update</button>
       </form>
 
     </div>
