@@ -779,4 +779,37 @@ aws ecs update-service \
     --region us-east-1
 ```
 
+## Monitoring (Prometheus & Grafana)
+
+Prerequisites:
+- Docker Compose
+
+1) Add metrics dependency for services and install:
+
+```bash
+cd user-service
+npm install
+npm install prom-client@^14 --save
+
+cd ../vehicle-service
+npm install
+npm install prom-client@^14 --save
+```
+
+2) Start the stack (includes Prometheus and Grafana):
+
+```bash
+docker compose up --build
+```
+
+3) Access monitoring UIs:
+
+- Prometheus: http://localhost:9090
+- Grafana: http://localhost:3003 (login: admin / admin)
+
+Notes:
+- Prometheus config is in `monitoring/prometheus.yml` and scrapes `user-service:3000` and `vehicle-service:3000` at `/metrics`.
+- Grafana provisioning is in `monitoring/grafana/provisioning` and automatically adds the Prometheus datasource.
+- If containers are already running, restart the compose stack after installing `prom-client` in services.
+
 📄 MIT License

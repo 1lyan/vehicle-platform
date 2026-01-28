@@ -36,6 +36,8 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.5.7",
     "uuid": "^9.0.0"
+    ,
+    "prom-client": "^14.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
