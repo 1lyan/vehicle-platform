@@ -1,0 +1,152 @@
+services:
+  # PostgreSQL для User Service
+  user-db:
+    image: postgres:14
+    container_name: user-db
+    environment:
+      POSTGRES_DB: user_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - user_db_data:/var/lib/postgresql/data
+    networks:
+      - vehicle-network
+
+  # PostgreSQL для Vehicle Service
+  vehicle-db:
+    image: postgres:14
+    container_name: vehicle-db
+    environment:
+      POSTGRES_DB: vehicle_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5432"
+    volumes:
+      - vehicle_db_data:/var/lib/postgresql/data
+    networks:
+      - vehicle-network
+
+  # RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+    - "5672:5672"
+    - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    volumes:
+    - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+    - vehicle-network
+
+  # User Service
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    ports:
+      - "3001:3000"
+    environment:
+      DB_HOST: user-db
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: password
+      DB_DATABASE: user_db
+      RABBITMQ_URL: amqp://rabbitmq:5672
+      NODE_ENV: development
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+    depends_on:
+      - user-db
+      - rabbitmq
+    restart: unless-stopped
+    networks:
+      - vehicle-network
+
+  # Vehicle Service
+  vehicle-service:
+    build: ./vehicle-service
+    container_name: vehicle-service
+    ports:
+      - "3002:3000"
+    environment:
+      DB_HOST: vehicle-db
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: password
+      DB_DATABASE: vehicle_db
+      RABBITMQ_URL: amqp://rabbitmq:5672
+      NODE_ENV: development
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+    depends_on:
+      - vehicle-db
+      - rabbitmq
+    restart: unless-stopped
+    networks:
+      - vehicle-network
+
+  # Frontend
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - user-service
+      - vehicle-service
+    restart: unless-stopped
+    networks:
+      - vehicle-network
+
+  # Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    restart: unless-stopped
+    networks:
+      - vehicle-network
+
+  # Grafana
+  grafana:
+    image: grafana/grafana:9.0.0
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "3003:3000"
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    networks:
+      - vehicle-network
+
+volumes:
+  user_db_data:
+  vehicle_db_data:
+  rabbitmq_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  vehicle-network:
+    driver: bridge

@@ -1,0 +1,15 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+
+RUN npm run build
+
+# Використовуємо вбудований сервер Vite для продакшну
+EXPOSE 3000
+
+CMD ["npx", "vite", "preview", "--host", "0.0.0.0", "--port", "3000"]
